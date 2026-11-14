@@ -28,15 +28,31 @@ Claude (chat)  ──►  Claude Desktop  ──starts──►  unityMCP server
 ## Prerequisites
 
 1. **Unity project** open in the Unity Editor.
-2. **MCP for Unity** package installed in the project
-   (see the package's install instructions — typically via Package Manager → *Add package from git URL*).
-3. **uv / uvx** installed. The Unity window's **Deps** tab can check and install it.
+2. **uv / uvx** installed. The Unity window's **Deps** tab can check and install it.
    Default location: `C:\Users\<you>\.local\bin\uvx.exe`
-4. **Claude Desktop** installed and signed in.
+3. **Claude Desktop** installed and signed in.
 
 ---
 
-## Step 1 — Set the transport to `stdio` in Unity
+## Step 1 — Install the MCP for Unity package
+
+1. In Unity: **Window → Package Manager**.
+2. Click the **+** button (top-left) → **Install package from git URL…**
+3. Paste this URL and click **Install**:
+
+   ```
+   https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#main
+   ```
+
+![Package Manager: Install package from git URL](images/package-manager-install-git-url.png)
+
+When it finishes, **MCP for Unity** (by Coplay, `com.coplaydev.unity-mcp`) appears under *Packages - Coplay*, and the **Window → MCP for Unity** menu becomes available.
+
+> 💡 Requires **Git** installed and on your PATH, since Unity fetches the package from GitHub. `#main` installs the latest version from the main branch.
+
+---
+
+## Step 2 — Set the transport to `stdio` in Unity
 
 1. In Unity: **Window → MCP for Unity**.
 2. On the **Connect** tab, set **Transport** to **Stdio**.
@@ -45,7 +61,7 @@ Claude (chat)  ──►  Claude Desktop  ──starts──►  unityMCP server
 
 ---
 
-## Step 2 — Find the config file Claude Desktop *actually* reads
+## Step 3 — Find the config file Claude Desktop *actually* reads
 
 This is the step that usually goes wrong.
 
@@ -69,7 +85,7 @@ C:\Users\<you>\AppData\Local\Packages\Claude_<id>\LocalCache\Roaming\Claude\clau
 
 ---
 
-## Step 3 — Add the `unityMCP` server to the config
+## Step 4 — Add the `unityMCP` server to the config
 
 Open the file in **Notepad** (Windows may associate `.json` with another app, e.g. After Effects).
 
@@ -113,7 +129,7 @@ Notes:
 
 ---
 
-## Step 4 — Fully restart Claude Desktop
+## Step 5 — Fully restart Claude Desktop
 
 Closing the window is **not** enough — it keeps running in the background.
 
@@ -124,7 +140,7 @@ Check: **Settings → Developer** (本機 MCP 伺服器 / Local MCP servers) sho
 
 ---
 
-## Step 5 — Start the Unity session
+## Step 6 — Start the Unity session
 
 Back in **Window → MCP for Unity → Connect**:
 
@@ -133,11 +149,11 @@ Back in **Window → MCP for Unity → Connect**:
 
 > 💡 Symptom: Claude can see the Unity tools but calls fail with
 > *"No Unity Editor instances found. Please ensure Unity is running with MCP for Unity bridge."*
-> → the server is fine, but the Unity side has no active session. Fix Step 5.
+> → the server is fine, but the Unity side has no active session. Fix Step 6.
 
 ---
 
-## Step 6 — Test from Claude
+## Step 7 — Test from Claude
 
 Open a chat (start a **new** chat if the Unity tools don't appear in an existing one) and ask something like:
 
@@ -151,11 +167,11 @@ A working setup returns the active scene's name, path and root object count.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Unity: **Transport Mismatch** (yellow) | Unity transport ≠ Claude Desktop config | Set Transport to **Stdio** (Step 1) |
-| Unity says **Configured**, but Claude Desktop shows no `unityMCP` | Store build reads a different config file | Edit the file under `AppData\Local\Packages\Claude_*` (Step 2) |
+| Unity: **Transport Mismatch** (yellow) | Unity transport ≠ Claude Desktop config | Set Transport to **Stdio** (Step 2) |
+| Unity says **Configured**, but Claude Desktop shows no `unityMCP` | Store build reads a different config file | Edit the file under `AppData\Local\Packages\Claude_*` (Step 3) |
 | `unityMCP` not running / error in Settings → Developer | Bad JSON, or `uvx.exe` missing | Validate JSON; install uv via Unity **Deps** tab; check **View Logs** |
-| Config edits ignored | Claude Desktop not fully restarted | Quit from system tray, reopen (Step 4) |
-| *"No Unity Editor instances found"* | Unity bridge session not active | Start session in Unity (Step 5) |
+| Config edits ignored | Claude Desktop not fully restarted | Quit from system tray, reopen (Step 5) |
+| *"No Unity Editor instances found"* | Unity bridge session not active | Start session in Unity (Step 6) |
 | Tools missing in an old chat | Chat started before server was added | Start a new chat |
 
 ---
